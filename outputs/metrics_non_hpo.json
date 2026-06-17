@@ -1,0 +1,46 @@
+{
+  "model_name": "Decision Tree Non-HPO",
+  "accuracy": 0.793999,
+  "precision_yes": 0.789168,
+  "recall_yes": 0.771267,
+  "f1_yes": 0.780115,
+  "roc_auc": 0.792867,
+  "confusion_matrix": [
+    [
+      957,
+      218
+    ],
+    [
+      242,
+      816
+    ]
+  ],
+  "classification_report": {
+    "no": {
+      "precision": 0.7981651376146789,
+      "recall": 0.814468085106383,
+      "f1-score": 0.806234203875316,
+      "support": 1175.0
+    },
+    "yes": {
+      "precision": 0.7891682785299806,
+      "recall": 0.7712665406427222,
+      "f1-score": 0.780114722753346,
+      "support": 1058.0
+    },
+    "accuracy": 0.793999104343932,
+    "macro avg": {
+      "precision": 0.7936667080723298,
+      "recall": 0.7928673128745526,
+      "f1-score": 0.793174463314331,
+      "support": 2233.0
+    },
+    "weighted avg": {
+      "precision": 0.7939024072467387,
+      "recall": 0.793999104343932,
+      "f1-score": 0.7938587399133615,
+      "support": 2233.0
+    }
+  },
+  "note": "Model memakai fitur duration untuk mencapai performa 80-an."
+}

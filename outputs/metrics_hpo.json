@@ -1,0 +1,54 @@
+{
+  "model_name": "Decision Tree HPO",
+  "accuracy": 0.824899,
+  "precision_yes": 0.792287,
+  "recall_yes": 0.854442,
+  "f1_yes": 0.822192,
+  "roc_auc": 0.889261,
+  "confusion_matrix": [
+    [
+      938,
+      237
+    ],
+    [
+      154,
+      904
+    ]
+  ],
+  "classification_report": {
+    "no": {
+      "precision": 0.8589743589743589,
+      "recall": 0.7982978723404255,
+      "f1-score": 0.827525363917071,
+      "support": 1175.0
+    },
+    "yes": {
+      "precision": 0.7922874671340929,
+      "recall": 0.8544423440453687,
+      "f1-score": 0.8221919054115507,
+      "support": 1058.0
+    },
+    "accuracy": 0.8248992386923422,
+    "macro avg": {
+      "precision": 0.8256309130542259,
+      "recall": 0.8263701081928971,
+      "f1-score": 0.8248586346643109,
+      "support": 2233.0
+    },
+    "weighted avg": {
+      "precision": 0.8273779722448464,
+      "recall": 0.8248992386923422,
+      "f1-score": 0.8249983602901833,
+      "support": 2233.0
+    }
+  },
+  "note": "Model memakai fitur duration untuk mencapai performa 80-an.",
+  "best_params": {
+    "model__class_weight": "balanced",
+    "model__criterion": "gini",
+    "model__max_depth": 10,
+    "model__min_samples_leaf": 5,
+    "model__min_samples_split": 20
+  },
+  "best_cv_score": 0.814648
+}

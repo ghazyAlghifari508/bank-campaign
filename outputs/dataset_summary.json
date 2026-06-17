@@ -1,0 +1,48 @@
+{
+  "rows": 11162,
+  "columns": 17,
+  "target": "deposit",
+  "target_distribution": {
+    "no": 5873,
+    "yes": 5289
+  },
+  "numeric_features": [
+    "age",
+    "balance",
+    "day",
+    "duration",
+    "campaign",
+    "pdays",
+    "previous"
+  ],
+  "categorical_features": [
+    "job",
+    "marital",
+    "education",
+    "default",
+    "housing",
+    "loan",
+    "contact",
+    "month",
+    "poutcome"
+  ],
+  "features_used": [
+    "age",
+    "job",
+    "marital",
+    "education",
+    "default",
+    "balance",
+    "housing",
+    "loan",
+    "contact",
+    "day",
+    "month",
+    "duration",
+    "campaign",
+    "pdays",
+    "previous",
+    "poutcome"
+  ],
+  "important_note": "Project ini memakai fitur duration untuk mengejar performa 80-an. Jelaskan konteksnya: prediksi setelah/selama interaksi campaign, bukan sebelum nasabah ditelepon."
+}
