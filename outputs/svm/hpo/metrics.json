@@ -1,0 +1,54 @@
+{
+  "model_name": "SVM HPO",
+  "accuracy": 0.823108,
+  "precision_yes": 0.797309,
+  "recall_yes": 0.840265,
+  "f1_yes": 0.818224,
+  "roc_auc": 0.886233,
+  "confusion_matrix": [
+    [
+      949,
+      226
+    ],
+    [
+      169,
+      889
+    ]
+  ],
+  "classification_report": {
+    "no": {
+      "precision": 0.8488372093023255,
+      "recall": 0.8076595744680851,
+      "f1-score": 0.8277365896205844,
+      "support": 1175.0
+    },
+    "yes": {
+      "precision": 0.7973094170403587,
+      "recall": 0.8402646502835539,
+      "f1-score": 0.8182236539346526,
+      "support": 1058.0
+    },
+    "accuracy": 0.8231079265562025,
+    "macro avg": {
+      "precision": 0.8230733131713421,
+      "recall": 0.8239621123758195,
+      "f1-score": 0.8229801217776185,
+      "support": 2233.0
+    },
+    "weighted avg": {
+      "precision": 0.8244232351808921,
+      "recall": 0.8231079265562025,
+      "f1-score": 0.8232293410958571,
+      "support": 2233.0
+    }
+  },
+  "method": "hpo",
+  "notebook_style": "SVM notebook",
+  "best_params": {
+    "model__C": 1,
+    "model__degree": 2,
+    "model__gamma": 0.1,
+    "model__kernel": "rbf"
+  },
+  "best_cv_score": 0.817448
+}

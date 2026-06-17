@@ -1,0 +1,47 @@
+{
+  "model_name": "Neural Network Non-HPO",
+  "accuracy": 0.841147,
+  "precision_yes": 0.808299,
+  "recall_yes": 0.871456,
+  "f1_yes": 0.83869,
+  "roc_auc": 0.903907,
+  "confusion_matrix": [
+    [
+      1434,
+      328
+    ],
+    [
+      204,
+      1383
+    ]
+  ],
+  "classification_report": {
+    "no": {
+      "precision": 0.8754578754578755,
+      "recall": 0.8138479001135074,
+      "f1-score": 0.8435294117647059,
+      "support": 1762.0
+    },
+    "yes": {
+      "precision": 0.8082992402104032,
+      "recall": 0.8714555765595463,
+      "f1-score": 0.8386901152213463,
+      "support": 1587.0
+    },
+    "accuracy": 0.8411466109286354,
+    "macro avg": {
+      "precision": 0.8418785578341393,
+      "recall": 0.8426517383365268,
+      "f1-score": 0.841109763493026,
+      "support": 3349.0
+    },
+    "weighted avg": {
+      "precision": 0.8436332250733611,
+      "recall": 0.8411466109286354,
+      "f1-score": 0.8412362007720777,
+      "support": 3349.0
+    }
+  },
+  "method": "non_hpo",
+  "notebook_style": "NN notebook"
+}

@@ -42,5 +42,5 @@
       "support": 2233.0
     }
   },
-  "note": "Model memakai fitur duration untuk mencapai performa 80-an."
+  "method": "non_hpo"
 }

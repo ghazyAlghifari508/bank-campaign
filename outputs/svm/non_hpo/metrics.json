@@ -1,0 +1,47 @@
+{
+  "model_name": "SVM Non-HPO",
+  "accuracy": 0.819077,
+  "precision_yes": 0.795126,
+  "recall_yes": 0.832703,
+  "f1_yes": 0.813481,
+  "roc_auc": 0.889002,
+  "confusion_matrix": [
+    [
+      948,
+      227
+    ],
+    [
+      177,
+      881
+    ]
+  ],
+  "classification_report": {
+    "no": {
+      "precision": 0.8426666666666667,
+      "recall": 0.8068085106382978,
+      "f1-score": 0.8243478260869566,
+      "support": 1175.0
+    },
+    "yes": {
+      "precision": 0.7951263537906137,
+      "recall": 0.832703213610586,
+      "f1-score": 0.8134810710987996,
+      "support": 1058.0
+    },
+    "accuracy": 0.8190774742498881,
+    "macro avg": {
+      "precision": 0.8188965102286402,
+      "recall": 0.8197558621244418,
+      "f1-score": 0.8189144485928781,
+      "support": 2233.0
+    },
+    "weighted avg": {
+      "precision": 0.8201419684925225,
+      "recall": 0.8190774742498881,
+      "f1-score": 0.8191991351879553,
+      "support": 2233.0
+    }
+  },
+  "method": "non_hpo",
+  "notebook_style": "SVM notebook"
+}

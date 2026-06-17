@@ -1,42 +1,68 @@
 import json
+import sys
 from pathlib import Path
 
 import joblib
+import numpy as np
 import pandas as pd
 import streamlit as st
 from PIL import Image
 
+
 BASE_DIR = Path(__file__).resolve().parent
+SRC_DIR = BASE_DIR / "src"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
 MODEL_CONFIG = {
-    "Non-HPO": {
-        "model_path": BASE_DIR / "models" / "decision_tree_non_hpo.pkl",
-        "metrics_path": BASE_DIR / "outputs" / "metrics_non_hpo.json",
-        "cm_path": BASE_DIR / "outputs" / "confusion_matrix_non_hpo.png",
-        "fi_path": BASE_DIR / "outputs" / "feature_importance_non_hpo.png",
-        "description": "Decision Tree default tanpa pencarian hyperparameter.",
+    "Decision Tree": {
+        "slug": "decision_tree",
+        "description": "Decision Tree Classifier dari implementasi awal project.",
     },
-    "HPO": {
-        "model_path": BASE_DIR / "models" / "decision_tree_hpo.pkl",
-        "metrics_path": BASE_DIR / "outputs" / "metrics_hpo.json",
-        "cm_path": BASE_DIR / "outputs" / "confusion_matrix_hpo.png",
-        "fi_path": BASE_DIR / "outputs" / "feature_importance_hpo.png",
-        "description": "Decision Tree dengan Hyperparameter Optimization menggunakan GridSearchCV.",
+    "KNN": {
+        "slug": "knn",
+        "description": "K-Nearest Neighbors mengikuti notebook KNN.",
+    },
+    "Neural Network": {
+        "slug": "nn",
+        "description": "MLPClassifier mengikuti notebook Neural Network.",
+    },
+    "SVM": {
+        "slug": "svm",
+        "description": "Support Vector Machine mengikuti notebook SVM.",
     },
 }
 
-st.set_page_config(
-    page_title="Prediksi Campaign Marketing Bank",
-    page_icon="🏦",
-    layout="wide",
-)
+METHOD_CONFIG = {
+    "Non-HPO": {
+        "slug": "non_hpo",
+        "description": "Model tanpa pencarian hyperparameter.",
+    },
+    "HPO": {
+        "slug": "hpo",
+        "description": "Model dengan hyperparameter optimization.",
+    },
+}
+
+
+def artifact_paths(model_slug, method_slug):
+    return {
+        "model": BASE_DIR / "models" / model_slug / f"{method_slug}.pkl",
+        "metrics": BASE_DIR / "outputs" / model_slug / method_slug / "metrics.json",
+        "confusion_matrix": BASE_DIR / "outputs" / model_slug / method_slug / "confusion_matrix.png",
+        "feature_importance": BASE_DIR / "outputs" / model_slug / method_slug / "feature_importance.png",
+    }
+
 
 @st.cache_resource
 def load_model(model_path: str):
     path = Path(model_path)
     if not path.exists():
-        st.error("Model belum ditemukan. Jalankan dulu: python src/train_all.py")
+        st.error(f"Model belum ditemukan: {path}")
+        st.info("Jalankan training dulu dengan: python src/train_all.py")
         st.stop()
     return joblib.load(path)
+
 
 @st.cache_data
 def load_json(path: str):
@@ -46,34 +72,86 @@ def load_json(path: str):
     with open(path, "r", encoding="utf-8") as file:
         return json.load(file)
 
-st.title("🏦 Prediksi Keberhasilan Campaign Marketing Bank terhadap Nasabah")
+
+def prediction_probabilities(model, input_data):
+    if hasattr(model, "predict_proba"):
+        probabilities = model.predict_proba(input_data)[0]
+        classes = list(getattr(model, "classes_", [0, 1]))
+        yes_index = classes.index(1) if 1 in classes else len(classes) - 1
+        prob_yes = float(probabilities[yes_index])
+        return prob_yes, 1.0 - prob_yes
+
+    if hasattr(model, "decision_function"):
+        score = float(np.ravel(model.decision_function(input_data))[0])
+        prob_yes = float(1 / (1 + np.exp(-score)))
+        return prob_yes, 1.0 - prob_yes
+
+    prediction = int(model.predict(input_data)[0])
+    return float(prediction), float(1 - prediction)
+
+
+def metrics_table():
+    rows = []
+    for model_name, model_config in MODEL_CONFIG.items():
+        for method_name, method_config in METHOD_CONFIG.items():
+            paths = artifact_paths(model_config["slug"], method_config["slug"])
+            metrics = load_json(str(paths["metrics"]))
+            if not metrics:
+                continue
+            rows.append(
+                {
+                    "Model": model_name,
+                    "Metode": method_name,
+                    "Accuracy": metrics.get("accuracy"),
+                    "Precision Yes": metrics.get("precision_yes"),
+                    "Recall Yes": metrics.get("recall_yes"),
+                    "F1 Yes": metrics.get("f1_yes"),
+                    "ROC-AUC": metrics.get("roc_auc"),
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+st.set_page_config(
+    page_title="Prediksi Campaign Marketing Bank",
+    page_icon="B",
+    layout="wide",
+)
+
+st.title("Prediksi Keberhasilan Campaign Marketing Bank")
 st.write(
-    "Aplikasi ini membandingkan dua model **Decision Tree Classifier**, yaitu model "
-    "**Non-HPO** dan model **HPO**. Target prediksi adalah apakah nasabah akan "
-    "menerima produk deposito berjangka atau tidak."
+    "Aplikasi ini membandingkan empat model klasifikasi: KNN, Neural Network, "
+    "Decision Tree, dan SVM. Setiap model memiliki versi Non-HPO dan HPO."
 )
 
 st.warning(
-    "Catatan jujur: aplikasi ini memakai fitur `duration` agar performa bisa masuk "
-    "kisaran 80-an. Artinya, framing yang benar adalah prediksi berdasarkan data nasabah "
-    "dan data interaksi campaign, bukan prediksi murni sebelum nasabah ditelepon."
+    "Catatan: fitur duration digunakan sebagai bagian dari data interaksi campaign. "
+    "Jadi framing yang tepat adalah prediksi berdasarkan data nasabah dan interaksi campaign, "
+    "bukan prediksi murni sebelum nasabah ditelepon."
 )
 
-selected_model = st.sidebar.selectbox("Pilih Jenis Model", list(MODEL_CONFIG.keys()))
-config = MODEL_CONFIG[selected_model]
-model = load_model(str(config["model_path"]))
-metrics = load_json(str(config["metrics_path"]))
+selected_model = st.sidebar.selectbox("Pilih Model", list(MODEL_CONFIG.keys()))
+selected_method = st.sidebar.selectbox("Pilih Metode", list(METHOD_CONFIG.keys()))
 
-st.sidebar.info(config["description"])
+model_slug = MODEL_CONFIG[selected_model]["slug"]
+method_slug = METHOD_CONFIG[selected_method]["slug"]
+paths = artifact_paths(model_slug, method_slug)
 
+model = load_model(str(paths["model"]))
+metrics = load_json(str(paths["metrics"]))
+
+st.sidebar.info(MODEL_CONFIG[selected_model]["description"])
+st.sidebar.caption(METHOD_CONFIG[selected_method]["description"])
 if metrics:
     st.sidebar.metric("Accuracy", f"{metrics.get('accuracy', 0):.2%}")
     st.sidebar.metric("F1 Yes", f"{metrics.get('f1_yes', 0):.2%}")
 
-main_tab, eval_tab, about_tab = st.tabs(["Prediksi", "Evaluasi Model", "Tentang Project"])
+main_tab, compare_tab, eval_tab, about_tab = st.tabs(
+    ["Prediksi", "Perbandingan", "Evaluasi Model", "Tentang Project"]
+)
 
 with main_tab:
-    st.header(f"Form Prediksi Nasabah - Model {selected_model}")
+    st.header(f"Form Prediksi - {selected_model} {selected_method}")
 
     col1, col2, col3 = st.columns(3)
 
@@ -82,9 +160,18 @@ with main_tab:
         job = st.selectbox(
             "Pekerjaan",
             [
-                "admin.", "blue-collar", "entrepreneur", "housemaid", "management",
-                "retired", "self-employed", "services", "student", "technician",
-                "unemployed", "unknown",
+                "admin.",
+                "blue-collar",
+                "entrepreneur",
+                "housemaid",
+                "management",
+                "retired",
+                "self-employed",
+                "services",
+                "student",
+                "technician",
+                "unemployed",
+                "unknown",
             ],
         )
         marital = st.selectbox("Status Pernikahan", ["married", "single", "divorced"])
@@ -108,7 +195,7 @@ with main_tab:
             min_value=0,
             max_value=5000,
             value=300,
-            help="Fitur kuat untuk akurasi, tetapi baru diketahui setelah/saat campaign berlangsung.",
+            help="Fitur kuat untuk akurasi, tetapi baru diketahui saat atau setelah campaign berlangsung.",
         )
         campaign = st.number_input("Jumlah Kontak pada Campaign Ini", min_value=1, max_value=50, value=1)
         pdays = st.number_input(
@@ -120,35 +207,35 @@ with main_tab:
         previous = st.number_input("Jumlah Kontak Campaign Sebelumnya", min_value=0, max_value=50, value=0)
         poutcome = st.selectbox("Hasil Campaign Sebelumnya", ["failure", "other", "success", "unknown"])
 
-    input_data = pd.DataFrame([
-        {
-            "age": age,
-            "job": job,
-            "marital": marital,
-            "education": education,
-            "default": default,
-            "balance": balance,
-            "housing": housing,
-            "loan": loan,
-            "contact": contact,
-            "day": day,
-            "month": month,
-            "duration": duration,
-            "campaign": campaign,
-            "pdays": pdays,
-            "previous": previous,
-            "poutcome": poutcome,
-        }
-    ])
+    input_data = pd.DataFrame(
+        [
+            {
+                "age": age,
+                "job": job,
+                "marital": marital,
+                "education": education,
+                "default": default,
+                "balance": balance,
+                "housing": housing,
+                "loan": loan,
+                "contact": contact,
+                "day": day,
+                "month": month,
+                "duration": duration,
+                "campaign": campaign,
+                "pdays": pdays,
+                "previous": previous,
+                "poutcome": poutcome,
+            }
+        ]
+    )
 
     st.subheader("Preview Input")
-    st.dataframe(input_data, use_container_width=True)
+    st.dataframe(input_data, width="stretch")
 
     if st.button("Prediksi", type="primary"):
-        prediction = model.predict(input_data)[0]
-        probability = model.predict_proba(input_data)[0]
-        prob_no = probability[0]
-        prob_yes = probability[1]
+        prediction = int(model.predict(input_data)[0])
+        prob_yes, prob_no = prediction_probabilities(model, input_data)
 
         st.subheader("Hasil Prediksi")
         result_col1, result_col2, result_col3 = st.columns(3)
@@ -161,8 +248,19 @@ with main_tab:
         result_col2.metric("Probabilitas Deposit", f"{prob_yes:.2%}")
         result_col3.metric("Probabilitas Tidak Deposit", f"{prob_no:.2%}")
 
+with compare_tab:
+    st.header("Perbandingan Semua Model")
+    comparison = metrics_table()
+    if comparison.empty:
+        st.info("Belum ada metrics yang tersedia. Jalankan training dulu.")
+    else:
+        formatted = comparison.copy()
+        for column in ["Accuracy", "Precision Yes", "Recall Yes", "F1 Yes", "ROC-AUC"]:
+            formatted[column] = formatted[column].map(lambda value: f"{value:.2%}")
+        st.dataframe(formatted, width="stretch", hide_index=True)
+
 with eval_tab:
-    st.header(f"Evaluasi Model {selected_model}")
+    st.header(f"Evaluasi - {selected_model} {selected_method}")
 
     if metrics:
         col1, col2, col3, col4, col5 = st.columns(5)
@@ -172,7 +270,7 @@ with eval_tab:
         col4.metric("F1 Yes", f"{metrics.get('f1_yes', 0):.2%}")
         col5.metric("ROC-AUC", f"{metrics.get('roc_auc', 0):.2%}")
 
-        if selected_model == "HPO" and "best_params" in metrics:
+        if selected_method == "HPO" and "best_params" in metrics:
             st.subheader("Best Parameter HPO")
             st.json(metrics["best_params"])
     else:
@@ -181,44 +279,38 @@ with eval_tab:
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Confusion Matrix")
-        if config["cm_path"].exists():
-            st.image(Image.open(config["cm_path"]), use_container_width=True)
+        if paths["confusion_matrix"].exists():
+            st.image(Image.open(paths["confusion_matrix"]), width="stretch")
         else:
             st.info("Confusion matrix belum tersedia.")
 
     with col2:
         st.subheader("Feature Importance")
-        if config["fi_path"].exists():
-            st.image(Image.open(config["fi_path"]), use_container_width=True)
+        if paths["feature_importance"].exists():
+            st.image(Image.open(paths["feature_importance"]), width="stretch")
         else:
-            st.info("Feature importance belum tersedia.")
+            st.info("Feature importance hanya tersedia untuk model yang mendukung.")
 
 with about_tab:
     st.header("Tentang Project")
     st.write(
         """
-        **Topik:** Prediksi Keberhasilan Campaign Marketing Bank terhadap Nasabah  
-        **Jenis Masalah:** Klasifikasi biner  
-        **Target:** `deposit` dengan kelas `yes` dan `no`  
-        **Model:** Decision Tree Classifier  
+        **Topik:** Prediksi Keberhasilan Campaign Marketing Bank terhadap Nasabah
+
+        **Jenis Masalah:** Klasifikasi biner
+
+        **Target:** `deposit` dengan kelas `yes` dan `no`
+
+        **Model:** KNN, Neural Network, Decision Tree, dan SVM
+
         **Perbandingan:** Non-HPO vs HPO
         """
     )
 
-    st.subheader("Perbedaan Non-HPO dan HPO")
+    st.subheader("Struktur Artefak")
     st.write(
         """
-        - **Non-HPO** memakai Decision Tree default tanpa proses pencarian parameter terbaik.
-        - **HPO** memakai GridSearchCV untuk mencari kombinasi hyperparameter yang menghasilkan performa terbaik.
-        """
-    )
-
-    st.subheader("Catatan Tentang Duration")
-    st.write(
-        """
-        Fitur `duration` digunakan karena sangat berpengaruh terhadap keberhasilan campaign. 
-        Namun, fitur ini baru diketahui ketika panggilan sudah dilakukan. Jadi, aplikasi ini lebih tepat 
-        dijelaskan sebagai model prediksi berbasis data nasabah dan interaksi campaign, bukan model 
-        targeting murni sebelum campaign dimulai.
+        Setiap model punya folder sendiri di `models/` dan `outputs/`.
+        Struktur ini dibuat agar notebook, model, metrics, dan gambar evaluasi tidak bercampur.
         """
     )

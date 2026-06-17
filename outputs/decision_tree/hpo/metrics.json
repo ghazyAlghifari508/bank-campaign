@@ -42,7 +42,7 @@
       "support": 2233.0
     }
   },
-  "note": "Model memakai fitur duration untuk mencapai performa 80-an.",
+  "method": "hpo",
   "best_params": {
     "model__class_weight": "balanced",
     "model__criterion": "gini",

@@ -1,9 +1,16 @@
-# Prediksi Keberhasilan Campaign Marketing Bank - Decision Tree
+# Prediksi Campaign Marketing Bank
 
-Project ini berisi aplikasi Streamlit untuk membandingkan dua model Decision Tree:
+Project ini berisi aplikasi Streamlit untuk membandingkan empat model klasifikasi:
 
-1. **Non-HPO**: Decision Tree default tanpa hyperparameter optimization.
-2. **HPO**: Decision Tree dengan GridSearchCV.
+1. KNN
+2. Neural Network
+3. Decision Tree
+4. SVM
+
+Setiap model memiliki dua metode:
+
+- Non-HPO: model tanpa hyperparameter optimization.
+- HPO: model dengan hyperparameter optimization.
 
 Target prediksi adalah kolom `deposit`:
 
@@ -12,29 +19,58 @@ Target prediksi adalah kolom `deposit`:
 
 ## Catatan Penting
 
-Project ini menggunakan fitur `duration` agar performa model masuk kisaran 80-an. Jadi framing presentasi yang benar:
+Project ini menggunakan fitur `duration`. Framing presentasi yang benar:
 
 > Model memprediksi keberhasilan campaign berdasarkan data nasabah dan data interaksi campaign, termasuk durasi panggilan.
 
-Jangan bilang model ini murni untuk prediksi sebelum nasabah ditelepon, karena `duration` baru diketahui saat/setelah panggilan.
+Jangan bilang model ini murni untuk prediksi sebelum nasabah ditelepon, karena `duration` baru diketahui saat atau setelah panggilan.
 
-## Hasil Training Saat Ini
-
-| Model | Accuracy | Precision Yes | Recall Yes | F1 Yes | ROC-AUC |
-|---|---:|---:|---:|---:|---:|
-| Non-HPO | 0.7940 | 0.7892 | 0.7713 | 0.7801 | 0.7929 |
-| HPO | 0.8249 | 0.7923 | 0.8544 | 0.8222 | 0.8893 |
-
-Best parameter HPO:
+## Struktur Folder
 
 ```text
-{
-  "model__class_weight": "balanced",
-  "model__criterion": "gini",
-  "model__max_depth": 10,
-  "model__min_samples_leaf": 5,
-  "model__min_samples_split": 20
-}
+bank-campaign/
+|-- app.py
+|-- requirements.txt
+|-- data/
+|   |-- bank.csv
+|-- notebooks/
+|   |-- decision_tree/
+|   |-- knn/
+|   |-- nn/
+|   |-- svm/
+|-- src/
+|   |-- common/
+|   |-- decision_tree/
+|   |-- knn/
+|   |-- nn/
+|   |-- svm/
+|   |-- train_all.py
+|-- models/
+|   |-- decision_tree/
+|   |-- knn/
+|   |-- nn/
+|   |-- svm/
+|-- outputs/
+|   |-- common/
+|   |-- decision_tree/
+|   |-- knn/
+|   |-- nn/
+|   |-- svm/
+```
+
+Di dalam `models/<nama_model>/` terdapat:
+
+```text
+non_hpo.pkl
+hpo.pkl
+```
+
+Di dalam `outputs/<nama_model>/<metode>/` terdapat:
+
+```text
+metrics.json
+confusion_matrix.png
+feature_importance.png  # hanya untuk model yang mendukung
 ```
 
 ## Cara Menjalankan
@@ -42,14 +78,13 @@ Best parameter HPO:
 Masuk ke folder project:
 
 ```powershell
-cd "C:\Big Project\bank_campaign_dt_hpo_vs_non_hpo"
+cd "C:\Coding\Data Science\Tugas_Besar\bank-campaign"
 ```
 
-Buat virtual environment:
+Aktifkan virtual environment:
 
 ```powershell
-python -m venv .venv
-.venv\Scriptsctivate
+.\.venv\Scripts\activate
 ```
 
 Install dependency:
@@ -58,7 +93,7 @@ Install dependency:
 pip install -r requirements.txt
 ```
 
-Training ulang model:
+Training semua model:
 
 ```powershell
 python src/train_all.py
@@ -70,25 +105,10 @@ Jalankan aplikasi:
 streamlit run app.py
 ```
 
-## Struktur Folder
+## Branch Kerja
+
+Perubahan struktur empat model ini dikerjakan di branch:
 
 ```text
-bank_campaign_dt_hpo_vs_non_hpo/
-├── app.py
-├── requirements.txt
-├── README.md
-├── data/
-│   └── bank.csv
-├── models/
-│   ├── decision_tree_non_hpo.pkl
-│   └── decision_tree_hpo.pkl
-├── outputs/
-│   ├── metrics_non_hpo.json
-│   ├── metrics_hpo.json
-│   ├── confusion_matrix_non_hpo.png
-│   ├── confusion_matrix_hpo.png
-│   ├── feature_importance_non_hpo.png
-│   └── feature_importance_hpo.png
-└── src/
-    └── train_all.py
+feature/compare-4-bank-models
 ```
