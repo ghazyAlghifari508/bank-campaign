@@ -10,7 +10,7 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.tree import DecisionTreeClassifier
 
 from common.evaluation import save_evaluation, save_feature_importance
-from common.preprocessing import split_features_target
+from common.preprocessing import split_features_target, OutlierCapper
 
 
 BASE_DIR = Path(__file__).resolve().parents[2]
@@ -31,12 +31,16 @@ def build_preprocessor(X: pd.DataFrame):
         ]
     )
 
-    return ColumnTransformer(
+    transformer = ColumnTransformer(
         transformers=[
             ("num", numeric_transformer, numeric_features),
             ("cat", categorical_transformer, categorical_features),
         ]
     )
+    return Pipeline(steps=[
+        ("cap_outliers", OutlierCapper()),
+        ("transform", transformer)
+    ])
 
 
 def main():

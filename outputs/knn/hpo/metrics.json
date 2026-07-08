@@ -1,53 +1,53 @@
 {
   "model_name": "KNN HPO",
-  "accuracy": 0.825918,
-  "precision_yes": 0.833777,
-  "recall_yes": 0.79017,
-  "f1_yes": 0.811388,
-  "roc_auc": 0.903692,
+  "accuracy": 0.829825,
+  "precision_yes": 0.82659,
+  "recall_yes": 0.810964,
+  "f1_yes": 0.818702,
+  "roc_auc": 0.899196,
   "confusion_matrix": [
     [
-      1512,
-      250
+      995,
+      180
     ],
     [
-      333,
-      1254
+      200,
+      858
     ]
   ],
   "classification_report": {
     "no": {
-      "precision": 0.8195121951219512,
-      "recall": 0.8581157775255391,
-      "f1-score": 0.8383698364291655,
-      "support": 1762.0
+      "precision": 0.8326359832635983,
+      "recall": 0.8468085106382979,
+      "f1-score": 0.8396624472573839,
+      "support": 1175.0
     },
     "yes": {
-      "precision": 0.8337765957446809,
-      "recall": 0.7901701323251418,
-      "f1-score": 0.8113879003558719,
-      "support": 1587.0
+      "precision": 0.8265895953757225,
+      "recall": 0.8109640831758034,
+      "f1-score": 0.8187022900763359,
+      "support": 1058.0
     },
-    "accuracy": 0.8259181845326963,
+    "accuracy": 0.8298253470667264,
     "macro avg": {
-      "precision": 0.826644395433316,
-      "recall": 0.8241429549253405,
-      "f1-score": 0.8248788683925188,
-      "support": 3349.0
+      "precision": 0.8296127893196604,
+      "recall": 0.8288862969070506,
+      "f1-score": 0.8291823686668599,
+      "support": 2233.0
     },
     "weighted avg": {
-      "precision": 0.8262717065546991,
-      "recall": 0.8259181845326963,
-      "f1-score": 0.8255838308907012,
-      "support": 3349.0
+      "precision": 0.8297711922267095,
+      "recall": 0.8298253470667264,
+      "f1-score": 0.8297314816068918,
+      "support": 2233.0
     }
   },
   "method": "hpo",
   "notebook_style": "KNN notebook",
   "best_params": {
-    "model__metric": "manhattan",
-    "model__n_neighbors": 19,
+    "model__metric": "euclidean",
+    "model__n_neighbors": 17,
     "model__weights": "distance"
   },
-  "best_cv_score": 0.820042
+  "best_cv_score": 0.823048
 }
