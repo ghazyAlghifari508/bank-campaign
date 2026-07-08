@@ -130,8 +130,25 @@ st.warning(
     "bukan prediksi murni sebelum nasabah ditelepon."
 )
 
-selected_model = st.sidebar.selectbox("Pilih Model", list(MODEL_CONFIG.keys()))
-selected_method = st.sidebar.selectbox("Pilih Metode", list(METHOD_CONFIG.keys()))
+with st.sidebar.form("model_selection_form"):
+    options = []
+    for m in MODEL_CONFIG.keys():
+        for method in METHOD_CONFIG.keys():
+            options.append(f"{m} - {method}")
+    selected_option = st.selectbox("Pilih Konfigurasi Model", options)
+    submitted = st.form_submit_button("Tampilkan Hasil", type="primary")
+
+if "selected_model" not in st.session_state:
+    st.session_state.selected_model = "Decision Tree"
+    st.session_state.selected_method = "Non-HPO"
+
+if submitted:
+    model_part, method_part = selected_option.split(" - ")
+    st.session_state.selected_model = model_part
+    st.session_state.selected_method = method_part
+
+selected_model = st.session_state.selected_model
+selected_method = st.session_state.selected_method
 
 model_slug = MODEL_CONFIG[selected_model]["slug"]
 method_slug = METHOD_CONFIG[selected_method]["slug"]

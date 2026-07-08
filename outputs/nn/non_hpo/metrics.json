@@ -1,45 +1,45 @@
 {
   "model_name": "Neural Network Non-HPO",
-  "accuracy": 0.841147,
-  "precision_yes": 0.808299,
-  "recall_yes": 0.871456,
-  "f1_yes": 0.83869,
-  "roc_auc": 0.903907,
+  "accuracy": 0.846843,
+  "precision_yes": 0.827839,
+  "recall_yes": 0.854442,
+  "f1_yes": 0.84093,
+  "roc_auc": 0.910304,
   "confusion_matrix": [
     [
-      1434,
-      328
+      987,
+      188
     ],
     [
-      204,
-      1383
+      154,
+      904
     ]
   ],
   "classification_report": {
     "no": {
-      "precision": 0.8754578754578755,
-      "recall": 0.8138479001135074,
-      "f1-score": 0.8435294117647059,
-      "support": 1762.0
+      "precision": 0.8650306748466258,
+      "recall": 0.84,
+      "f1-score": 0.8523316062176166,
+      "support": 1175.0
     },
     "yes": {
-      "precision": 0.8082992402104032,
-      "recall": 0.8714555765595463,
-      "f1-score": 0.8386901152213463,
-      "support": 1587.0
+      "precision": 0.8278388278388278,
+      "recall": 0.8544423440453687,
+      "f1-score": 0.8409302325581396,
+      "support": 1058.0
     },
-    "accuracy": 0.8411466109286354,
+    "accuracy": 0.8468428123600538,
     "macro avg": {
-      "precision": 0.8418785578341393,
-      "recall": 0.8426517383365268,
-      "f1-score": 0.841109763493026,
-      "support": 3349.0
+      "precision": 0.8464347513427268,
+      "recall": 0.8472211720226843,
+      "f1-score": 0.846630919387878,
+      "support": 2233.0
     },
     "weighted avg": {
-      "precision": 0.8436332250733611,
-      "recall": 0.8411466109286354,
-      "f1-score": 0.8412362007720777,
-      "support": 3349.0
+      "precision": 0.8474091011187932,
+      "recall": 0.8468428123600538,
+      "f1-score": 0.8469296118908245,
+      "support": 2233.0
     }
   },
   "method": "non_hpo",

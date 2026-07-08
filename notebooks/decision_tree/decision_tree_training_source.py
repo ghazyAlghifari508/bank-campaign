@@ -28,6 +28,29 @@ OUTPUT_DIR = BASE_DIR / "outputs"
 MODEL_DIR.mkdir(exist_ok=True)
 OUTPUT_DIR.mkdir(exist_ok=True)
 
+from sklearn.base import BaseEstimator, TransformerMixin
+
+class OutlierCapper(BaseEstimator, TransformerMixin):
+    def __init__(self, columns=None):
+        self.columns = columns or ["balance", "duration", "campaign", "pdays", "previous"]
+
+    def fit(self, X, y=None):
+        self.bounds_ = {}
+        for column in self.columns:
+            q1 = X[column].quantile(0.25)
+            q3 = X[column].quantile(0.75)
+            iqr = q3 - q1
+            self.bounds_[column] = (q1 - 1.5 * iqr, q3 + 1.5 * iqr)
+        return self
+
+    def transform(self, X):
+        X = X.copy()
+        for column, (lower, upper) in self.bounds_.items():
+            X[column] = X[column].clip(lower=lower, upper=upper)
+        return X
+
+    def get_feature_names_out(self, input_features=None):
+        return input_features
 
 def build_preprocessor(X: pd.DataFrame):
     numeric_features = X.select_dtypes(exclude="object").columns.tolist()
@@ -41,12 +64,16 @@ def build_preprocessor(X: pd.DataFrame):
         ]
     )
 
-    return ColumnTransformer(
+    transformer = ColumnTransformer(
         transformers=[
             ("num", numeric_transformer, numeric_features),
             ("cat", categorical_transformer, categorical_features),
         ]
     )
+    return Pipeline(steps=[
+        ("cap_outliers", OutlierCapper()),
+        ("transform", transformer)
+    ])
 
 
 def save_evaluation(model, X_test, y_test, model_name: str, suffix: str, extra=None):

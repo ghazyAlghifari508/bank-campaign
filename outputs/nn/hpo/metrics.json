@@ -1,56 +1,58 @@
 {
   "model_name": "Neural Network HPO",
-  "accuracy": 0.847417,
-  "precision_yes": 0.825666,
-  "recall_yes": 0.859483,
-  "f1_yes": 0.842235,
-  "roc_auc": 0.916786,
+  "accuracy": 0.84953,
+  "precision_yes": 0.821747,
+  "recall_yes": 0.871456,
+  "f1_yes": 0.845872,
+  "roc_auc": 0.918478,
   "confusion_matrix": [
     [
-      1474,
-      288
+      975,
+      200
     ],
     [
-      223,
-      1364
+      136,
+      922
     ]
   ],
   "classification_report": {
     "no": {
-      "precision": 0.8685916322922805,
-      "recall": 0.8365493757094211,
-      "f1-score": 0.8522694420352703,
-      "support": 1762.0
+      "precision": 0.8775877587758776,
+      "recall": 0.8297872340425532,
+      "f1-score": 0.8530183727034121,
+      "support": 1175.0
     },
     "yes": {
-      "precision": 0.8256658595641646,
-      "recall": 0.8594833018273472,
-      "f1-score": 0.8422352577956159,
-      "support": 1587.0
+      "precision": 0.82174688057041,
+      "recall": 0.8714555765595463,
+      "f1-score": 0.8458715596330275,
+      "support": 1058.0
     },
-    "accuracy": 0.8474171394446103,
+    "accuracy": 0.8495297805642633,
     "macro avg": {
-      "precision": 0.8471287459282226,
-      "recall": 0.8480163387683841,
-      "f1-score": 0.8472523499154432,
-      "support": 3349.0
+      "precision": 0.8496673196731438,
+      "recall": 0.8506214053010497,
+      "f1-score": 0.8494449661682197,
+      "support": 2233.0
     },
     "weighted avg": {
-      "precision": 0.8482502762697305,
-      "recall": 0.8474171394446103,
-      "f1-score": 0.8475145150754818,
-      "support": 3349.0
+      "precision": 0.8511302356494178,
+      "recall": 0.8495297805642633,
+      "f1-score": 0.8496321979481649,
+      "support": 2233.0
     }
   },
   "method": "hpo",
   "notebook_style": "NN notebook",
   "best_params": {
-    "model__activation": "tanh",
+    "model__activation": "relu",
     "model__hidden_layer_sizes": [
-      100
+      100,
+      50,
+      25
     ],
-    "model__max_iter": 200,
-    "model__solver": "adam"
+    "model__max_iter": 350,
+    "model__solver": "sgd"
   },
-  "best_cv_score": 0.846409
+  "best_cv_score": 0.84623
 }

@@ -30,6 +30,9 @@ class OutlierCapper(BaseEstimator, TransformerMixin):
             X[column] = X[column].clip(lower=lower, upper=upper)
         return X
 
+    def get_feature_names_out(self, input_features=None):
+        return input_features
+
 
 def build_knn_nn_preprocessor():
     encoder = ColumnTransformer(
@@ -71,6 +74,7 @@ def build_svm_preprocessor():
 
     return Pipeline(
         steps=[
+            ("cap_outliers", OutlierCapper()),
             ("encode", encoder),
             ("scale", StandardScaler()),
         ]
