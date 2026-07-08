@@ -1,114 +1,78 @@
-# Prediksi Campaign Marketing Bank
+# Prediksi Campaign Marketing Bank (Tugas Besar)
 
-Project ini berisi aplikasi Streamlit untuk membandingkan empat model klasifikasi:
+Project ini berisi implementasi dan perbandingan empat algoritma *Machine Learning* untuk memprediksi keberhasilan *campaign* pemasaran (telemarketing) pada nasabah bank, apakah mereka akan membuka deposito berjangka atau tidak.
 
-1. KNN
-2. Neural Network
-3. Decision Tree
-4. SVM
+### Algoritma yang Dieksplorasi:
+1. **K-Nearest Neighbors (KNN)**
+2. **Decision Tree**
+3. **Support Vector Machine (SVM)**
+4. **Neural Network (NN)**
 
-Setiap model memiliki dua metode:
+Setiap model dikembangkan dalam dua versi:
+- **Non-HPO**: Model dasar (*baseline*) dengan parameter *default*.
+- **HPO**: Model yang telah dioptimasi menggunakan *Hyperparameter Optimization* (GridSearchCV).
 
-- Non-HPO: model tanpa hyperparameter optimization.
-- HPO: model dengan hyperparameter optimization.
+Target prediksi pada dataset ini adalah kolom `deposit`:
+- `yes`: *Campaign* berhasil, nasabah mengambil deposito.
+- `no`: *Campaign* tidak berhasil.
 
-Target prediksi adalah kolom `deposit`:
+---
 
-- `yes`: campaign berhasil, nasabah mengambil deposito.
-- `no`: campaign tidak berhasil.
+## Metodologi Utama
+- **Penanganan Outlier**: Menggunakan metode batas IQR (Interquartile Range) pada fitur numerik.
+- **Pembagian Data**: Dataset dibagi secara seragam menggunakan `train_test_split` dengan rasio **80% data latih** dan **20% data uji** (`random_state=42`, `stratify=y`).
+- **Feature Scaling**: Menggunakan `StandardScaler` (diterapkan sesuai dengan karakteristik masing-masing algoritma).
 
-## Catatan Penting
+## 🏆 Hasil Terbaik (Best Model)
+Berdasarkan hasil pengujian, **Neural Network (dengan HPO)** merupakan model paling optimal dengan performa:
+- **Akurasi**: 84.95%
+- **F1-Score**: 84.59%
+- **ROC-AUC**: 0.9185
 
-Project ini menggunakan fitur `duration`. Framing presentasi yang benar:
+---
 
-> Model memprediksi keberhasilan campaign berdasarkan data nasabah dan data interaksi campaign, termasuk durasi panggilan.
+## Catatan Penting (Framing Presentasi)
+Project ini menggunakan fitur `duration` (durasi telepon). Framing presentasi yang benar kepada dosen/penguji:
+> *"Model memprediksi keberhasilan campaign berdasarkan data profil nasabah **dan interaksi campaign yang telah berlangsung** (termasuk durasi panggilan)."*
 
-Jangan bilang model ini murni untuk prediksi sebelum nasabah ditelepon, karena `duration` baru diketahui saat atau setelah panggilan.
+Jangan mengklaim bahwa model ini murni untuk prediksi *sebelum* nasabah ditelepon, karena `duration` baru diketahui setelah panggilan selesai.
+
+---
 
 ## Struktur Folder
 
 ```text
 bank-campaign/
-|-- app.py
-|-- requirements.txt
+|-- app.py                  # Aplikasi Streamlit (Web UI)
+|-- requirements.txt        # Daftar dependency Python
 |-- data/
-|   |-- bank.csv
-|-- notebooks/
-|   |-- decision_tree/
-|   |-- knn/
-|   |-- nn/
-|   |-- svm/
-|-- src/
-|   |-- common/
-|   |-- decision_tree/
-|   |-- knn/
-|   |-- nn/
-|   |-- svm/
-|   |-- train_all.py
-|-- models/
-|   |-- decision_tree/
-|   |-- knn/
-|   |-- nn/
-|   |-- svm/
-|-- outputs/
-|   |-- common/
-|   |-- decision_tree/
-|   |-- knn/
-|   |-- nn/
-|   |-- svm/
+|   |-- bank.csv            # Dataset utama
+|-- notebooks/              # Lembar kerja Jupyter Notebook per model
+|-- src/                    # Source code pipeline training model
+|   |-- train_all.py        # Skrip utama untuk menjalankan training seluruh model
+|-- models/                 # File model (.pkl) hasil training
+|-- outputs/                # Hasil evaluasi (metrics.json, confusion matrix, feature importance)
 ```
 
-Di dalam `models/<nama_model>/` terdapat:
+## Cara Menjalankan Project
 
-```text
-non_hpo.pkl
-hpo.pkl
-```
-
-Di dalam `outputs/<nama_model>/<metode>/` terdapat:
-
-```text
-metrics.json
-confusion_matrix.png
-feature_importance.png  # hanya untuk model yang mendukung
-```
-
-## Cara Menjalankan
-
-Masuk ke folder project:
-
+**1. Masuk ke folder project:**
 ```powershell
 cd "C:\Coding\Data Science\Tugas_Besar\bank-campaign"
 ```
 
-Aktifkan virtual environment:
-
+**2. Aktifkan virtual environment & Install dependency:**
 ```powershell
 .\.venv\Scripts\activate
-```
-
-Install dependency:
-
-```powershell
 pip install -r requirements.txt
 ```
 
-Training semua model:
-
+**3. (Opsional) Training ulang seluruh model:**
 ```powershell
 python src/train_all.py
 ```
 
-Jalankan aplikasi:
-
+**4. Jalankan aplikasi Web UI:**
 ```powershell
 streamlit run app.py
-```
-
-## Branch Kerja
-
-Perubahan struktur empat model ini dikerjakan di branch:
-
-```text
-feature/compare-4-bank-models
 ```
