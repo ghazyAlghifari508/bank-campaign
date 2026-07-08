@@ -1,5 +1,7 @@
 # Prediksi Campaign Marketing Bank (Tugas Besar)
 
+🌐 **Live Website (Streamlit):** [https://bank-campaign-tubes.streamlit.app/](https://bank-campaign-tubes.streamlit.app/)
+
 Project ini berisi implementasi dan perbandingan empat algoritma *Machine Learning* untuk memprediksi keberhasilan *campaign* pemasaran (telemarketing) pada nasabah bank, apakah mereka akan membuka deposito berjangka atau tidak.
 
 ### Algoritma yang Dieksplorasi:
